@@ -9,11 +9,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
+import rtg.api.RTGAPI;
 import rtg.api.config.BiomeConfig;
 import rtg.api.util.BlockUtil;
 import rtg.api.util.noise.OpenSimplexNoise;
-import rtg.api.world.RTGWorld;
-import rtg.api.world.deco.DecoBaseBiomeDecorations;
+import rtg.api.world.IRTGWorld;
+import rtg.api.world.deco.collection.DecoCollectionOcean;
 import rtg.api.world.surface.SurfaceBase;
 import rtg.api.world.terrain.TerrainBase;
 
@@ -34,6 +35,9 @@ public class RealisticBiomeVanillaOcean extends RealisticBiomeVanillaBase {
         this.getConfig().ALLOW_SCENIC_LAKES.set(false);
         this.getConfig().ALLOW_VILLAGES.set(false);
 
+        this.getConfig().addProperty(this.getConfig().ALLOW_SPONGE).set(true);
+        this.getConfig().addProperty(this.getConfig().ALLOW_OCEAN_WAVES);
+
         this.getConfig().addProperty(this.getConfig().SURFACE_MIX_BLOCK).set("");
         this.getConfig().addProperty(this.getConfig().SURFACE_MIX_BLOCK_META).set(0);
     }
@@ -51,9 +55,8 @@ public class RealisticBiomeVanillaOcean extends RealisticBiomeVanillaBase {
         }
 
         @Override
-        public float generateNoise(RTGWorld rtgWorld, int x, int y, float border, float river) {
-
-            return terrainOcean(x, y, rtgWorld.simplex, river, rtg.api.RTGAPI.config().SEA_LVL_MODIFIER.get() - 13f);
+        public float generateNoise(IRTGWorld rtgWorld, int x, int y, float border, float river) {
+            return terrainOcean(x, y, rtgWorld.simplex(), river, RTGAPI.config().SEA_LVL_MODIFIER.get() - 13f);
         }
     }
 
@@ -82,10 +85,10 @@ public class RealisticBiomeVanillaOcean extends RealisticBiomeVanillaBase {
         }
 
         @Override
-        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, RTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
+        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, IRTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
 
-            Random rand = rtgWorld.rand;
-            OpenSimplexNoise simplex = rtgWorld.simplex;
+            Random rand = rtgWorld.rand();
+            OpenSimplexNoise simplex = rtgWorld.simplex();
 
             for (int k = 255; k > -1; k--) {
                 Block b = primer.getBlockState(x, k, z).getBlock();
@@ -121,9 +124,7 @@ public class RealisticBiomeVanillaOcean extends RealisticBiomeVanillaBase {
 
     @Override
     public void initDecos() {
-
-        DecoBaseBiomeDecorations decoBaseBiomeDecorations = new DecoBaseBiomeDecorations();
-        this.addDeco(decoBaseBiomeDecorations);
+        this.addDecoCollection(new DecoCollectionOcean(this.getConfig()));
     }
 
     @Override

@@ -9,10 +9,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
+import rtg.api.RTGAPI;
 import rtg.api.config.BiomeConfig;
 import rtg.api.util.BlockUtil;
 import rtg.api.util.CliffCalculator;
-import rtg.api.world.RTGWorld;
+import rtg.api.world.IRTGWorld;
 import rtg.api.world.deco.DecoTree;
 import rtg.api.world.gen.feature.tree.rtg.TreeRTG;
 import rtg.api.world.gen.feature.tree.rtg.TreeRTGCocosNucifera;
@@ -34,6 +35,8 @@ public class RealisticBiomeVanillaBeach extends RealisticBiomeVanillaBase {
     public void initConfig() {
 
         this.getConfig().ALLOW_VILLAGES.set(false);
+        this.getConfig().SURFACE_BLEED_IN.set(true);
+        this.getConfig().SURFACE_BLEED_OUT.set(true);
         this.getConfig().addProperty(this.getConfig().ALLOW_PALM_TREES).set(true);
     }
 
@@ -50,9 +53,8 @@ public class RealisticBiomeVanillaBeach extends RealisticBiomeVanillaBase {
         }
 
         @Override
-        public float generateNoise(RTGWorld rtgWorld, int x, int y, float border, float river) {
-
-            return terrainBeach(x, y, rtgWorld.simplex, river, 180f, 35f, rtg.api.RTGAPI.config().SEA_LVL_MODIFIER.get());
+        public float generateNoise(IRTGWorld rtgWorld, int x, int y, float border, float river) {
+            return terrainBeach(x, y, rtgWorld.simplex(), river, 180f, 35f, RTGAPI.config().SEA_LVL_MODIFIER.get());
         }
     }
 
@@ -81,9 +83,9 @@ public class RealisticBiomeVanillaBeach extends RealisticBiomeVanillaBase {
 
         @SuppressWarnings("unused")
         @Override
-        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, RTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
+        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, IRTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
 
-            Random rand = rtgWorld.rand;
+            Random rand = rtgWorld.rand();
             float c = CliffCalculator.calc(x, z, noise);
             boolean cliff = c > 1.3f ? true : false;
             boolean dirt = false;

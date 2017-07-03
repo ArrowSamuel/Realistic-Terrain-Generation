@@ -9,10 +9,11 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
+import rtg.api.RTGAPI;
 import rtg.api.config.BiomeConfig;
 import rtg.api.util.CliffCalculator;
 import rtg.api.util.noise.OpenSimplexNoise;
-import rtg.api.world.RTGWorld;
+import rtg.api.world.IRTGWorld;
 import rtg.api.world.deco.DecoBaseBiomeDecorations;
 import rtg.api.world.surface.SurfaceBase;
 import rtg.api.world.terrain.TerrainBase;
@@ -52,9 +53,8 @@ public class RealisticBiomeVanillaMushroomIslandShore extends RealisticBiomeVani
         }
 
         @Override
-        public float generateNoise(RTGWorld rtgWorld, int x, int y, float border, float river) {
-
-            return terrainMarsh(x, y, rtgWorld.simplex, rtg.api.RTGAPI.config().SEA_LVL_MODIFIER.get() -1.5f,river);
+        public float generateNoise(IRTGWorld rtgWorld, int x, int y, float border, float river) {
+            return terrainMarsh(x, y, rtgWorld.simplex(), RTGAPI.config().SEA_LVL_MODIFIER.get() -1.5f,river);
         }
     }
 
@@ -90,10 +90,10 @@ public class RealisticBiomeVanillaMushroomIslandShore extends RealisticBiomeVani
         }
 
         @Override
-        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, RTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
+        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, IRTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
 
-            Random rand = rtgWorld.rand;
-            OpenSimplexNoise simplex = rtgWorld.simplex;
+            Random rand = rtgWorld.rand();
+            OpenSimplexNoise simplex = rtgWorld.simplex();
             float c = CliffCalculator.calc(x, z, noise);
             int cliff = 0;
 

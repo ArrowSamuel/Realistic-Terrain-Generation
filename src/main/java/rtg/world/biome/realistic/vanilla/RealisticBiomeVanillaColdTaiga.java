@@ -9,11 +9,12 @@ import net.minecraft.init.Blocks;
 import net.minecraft.world.biome.Biome;
 import net.minecraft.world.chunk.ChunkPrimer;
 
+import rtg.api.RTGAPI;
 import rtg.api.config.BiomeConfig;
 import rtg.api.util.BlockUtil;
 import rtg.api.util.CliffCalculator;
 import rtg.api.util.noise.OpenSimplexNoise;
-import rtg.api.world.RTGWorld;
+import rtg.api.world.IRTGWorld;
 import rtg.api.world.deco.collection.DecoCollectionTaiga;
 import rtg.api.world.surface.SurfaceBase;
 import rtg.api.world.terrain.TerrainBase;
@@ -47,9 +48,8 @@ public class RealisticBiomeVanillaColdTaiga extends RealisticBiomeVanillaBase {
 
         }
 
-        public float generateNoise(RTGWorld rtgWorld, int x, int y, float border, float river) {
-
-            return terrainFlatLakes(x, y, rtgWorld.simplex, river, 13f, rtg.api.RTGAPI.config().SEA_LVL_MODIFIER.get() + 3f);
+        public float generateNoise(IRTGWorld rtgWorld, int x, int y, float border, float river) {
+            return terrainFlatLakes(x, y, rtgWorld.simplex(), river, 13f, RTGAPI.config().SEA_LVL_MODIFIER.get() + 3f);
         }
     }
 
@@ -66,10 +66,10 @@ public class RealisticBiomeVanillaColdTaiga extends RealisticBiomeVanillaBase {
         }
 
         @Override
-        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, RTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
+        public void paintTerrain(ChunkPrimer primer, int i, int j, int x, int z, int depth, IRTGWorld rtgWorld, float[] noise, float river, Biome[] base) {
 
-            Random rand = rtgWorld.rand;
-            OpenSimplexNoise simplex = rtgWorld.simplex;
+            Random rand = rtgWorld.rand();
+            OpenSimplexNoise simplex = rtgWorld.simplex();
             float p = simplex.noise2(i / 8f, j / 8f) * 0.5f;
             float c = CliffCalculator.calc(x, z, noise);
             int cliff = 0;
@@ -140,6 +140,6 @@ public class RealisticBiomeVanillaColdTaiga extends RealisticBiomeVanillaBase {
     @Override
     public void initDecos() {
 
-        this.addDecoCollection(new DecoCollectionTaiga(this.getConfig().ALLOW_LOGS.get(), 8f));
+        this.addDecoCollection(new DecoCollectionTaiga(this.getConfig(), 8f));
     }
 }
